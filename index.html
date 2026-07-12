@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Content Repurposing Tool</title>
+    <style>
+        /* CSS ab yahan ANDAR hai, bahar ki file nahi chahiye */
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+        h1 { color: #333; }
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        button {
+            background: #1a73e8;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            cursor: pointer;
+            width: 100%;
+        }
+        button:hover { background: #1557b0; }
+        .card {
+            background: #f0f4f9;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            border-left: 5px solid #1a73e8;
+        }
+        .error {
+            background: #ffebee;
+            padding: 15px;
+            border-radius: 8px;
+            color: #c62828;
+        }
+        hr { margin: 20px 0; }
+        .output-text {
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📝 Content Repurposing Tool</h1>
+        <p>Ek Blog se LinkedIn, Twitter Thread, aur Email banayein</p>
+        
+        <form method="POST">
+            <input type="text" name="blog_url" placeholder="Blog URL daalein (jaise https://example.com)">
+            <hr>
+            <textarea name="blog_text" rows="6" placeholder="Ya seedha blog content paste karein"></textarea>
+            <button type="submit">✨ Generate Content</button>
+        </form>
+
+        {% if error %}
+        <div class="error">❌ {{ error }}</div>
+        {% endif %}
+
+        {% if linkedin %}
+        <div class="card">
+            <h3>💼 LinkedIn Post</h3>
+            <p class="output-text">{{ linkedin }}</p>
+        </div>
+        <div class="card">
+            <h3>🐦 Twitter/X Thread</h3>
+            <p class="output-text">{{ twitter }}</p>
+        </div>
+        <div class="card">
+            <h3>📧 Email Newsletter</h3>
+            <p class="output-text">{{ email }}</p>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
