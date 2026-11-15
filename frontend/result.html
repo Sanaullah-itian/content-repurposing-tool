@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Results - Content Pro</title>
+    <link rel="stylesheet" href="/frontend/style.css">
+    <!-- Chart.js for Pie Chart -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</button>
+
+    <div class="container">
+        <h1>✅ Results & Analytics</h1>
+        
+        <div id="singleResults">
+            
+            <!-- 1. OUTPUTS PEHLE -->
+            <div class="card">
+                <h3>💼 LinkedIn Post <button onclick="downloadText('linkedinOut', 'LinkedIn_Post.txt')" style="width:auto; padding:5px 10px; float:right; font-size:12px;">📥 Download</button></h3>
+                <pre id="linkedinOut">-</pre>
+            </div>
+            <div class="card">
+                <h3>🐦 Twitter Thread <button onclick="downloadText('twitterOut', 'Twitter_Thread.txt')" style="width:auto; padding:5px 10px; float:right; font-size:12px;">📥 Download</button></h3>
+                <pre id="twitterOut">-</pre>
+            </div>
+            <div class="card">
+                <h3>📧 Email Newsletter <button onclick="downloadText('emailOut', 'Email.txt')" style="width:auto; padding:5px 10px; float:right; font-size:12px;">📥 Download</button></h3>
+                <pre id="emailOut">-</pre>
+            </div>
+
+            <!-- 2. ML ANALYSIS NEECHE -->
+            <div class="card" style="border-left-color: #00C853; margin-top: 30px;">
+                <h3 style="color: #00C853;">🧠 ML Analysis</h3>
+                <p><strong>Sentiment:</strong> <span id="sentimentOut">-</span> | <strong>Polarity:</strong> <span id="polarityOut">-</span></p>
+            </div>
+
+            <!-- 3. WORD CLOUD NEECHE -->
+            <div class="card" style="border-left-color: #6C63FF;">
+                <h3>☁️ Word Cloud</h3>
+                <div id="wordCloud"></div>
+            </div>
+
+            <!-- 4. PIE CHART NEECHE -->
+            <div class="card" style="border-left-color: #FF9800; text-align: center;">
+                <h3>📊 Word Frequency Chart</h3>
+                <div style="width: 300px; margin: auto;">
+                    <canvas id="pieChart"></canvas>
+                </div>
+            </div>
+
+        </div>
+
+        <div id="batchResults" style="display:none;">
+            <div class="card" style="border-left-color: #FF9800;">
+                <h3 style="color: #FF9800;">📊 Top Words in CSV</h3>
+                <pre id="batchFreqOut">-</pre>
+            </div>
+            <div class="card">
+                <h3>📋 Batch Processing Results <button onclick="downloadTableAsCSV()" style="width:auto; padding:5px 10px; float:right; font-size:12px;">📥 Download CSV</button></h3>
+                <table style="width:100%; text-align:left; border-collapse: collapse;" border="1">
+                    <thead><tr style="background:#3a3a5c; color:white;"><th>Text Preview</th><th>Sentiment</th></tr></thead>
+                    <tbody id="batchTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <button onclick="window.location.href='/frontend/dashboard.html'" style="margin-top: 20px;">⬅️ Back to Dashboard</button>
+    </div>
+
+    <script>
+        // --- Theme Toggle ---
+        if(localStorage.getItem('theme') === 'light') { document.body.classList.add('light-mode'); document.getElementById('themeBtn').innerText = '☀️'; }
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+            const isLight = document.body.classList.contains('light-mode');
+            document.getElementById('themeBtn').innerText = isLight ? '☀️' : '🌙';
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+        }
+
+        // --- Download File Logic ---
+        function downloadText(elementId, filename) {
+            const text = document.getElementById(elementId).innerText;
+            const blob = new Blob([text], { type: 'text/plain' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = filename;
+            a.click();
+        }
+
+        function downloadTableAsCSV() {
+            let csvContent = "Text Preview,Sentiment\n";
+            const rows = document.querySelectorAll('#batchTableBody tr');
+            rows.forEach(row => {
+                const cols = row.querySelectorAll('td');
+                csvContent += `"${cols[0].innerText}","${cols[1].innerText}"\n`;
+            });
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'Batch_Results.csv';
+            a.click();
+        }
+
+        // --- Load Data ---
+        const singleData = JSON.parse(localStorage.getItem('results'));
+        const batchData = JSON.parse(localStorage.getItem('batchResults'));
+
+        if (batchData) {
+            document.getElementById('singleResults').style.display = 'none';
+            document.getElementById('batchResults').style.display = 'block';
+            
+            let tableHTML = "";
+            batchData.batch_results.forEach(row => {
+                tableHTML += `<tr><td>${row.text}</td><td>${row.sentiment}</td></tr>`;
+            });
+            document.getElementById('batchTableBody').innerHTML = tableHTML;
+            document.getElementById('batchFreqOut').innerText = JSON.stringify(batchData.word_freq, null, 2);
+            localStorage.removeItem('batchResults');
+            
+        } else if (singleData) {
+            document.getElementById('sentimentOut').innerText = singleData.sentiment;
+            document.getElementById('polarityOut').innerText = singleData.polarity.toFixed(2);
+            document.getElementById('linkedinOut').innerText = singleData.linkedin;
+            document.getElementById('twitterOut').innerText = singleData.twitter;
+            document.getElementById('emailOut').innerText = singleData.email;
+            
+            // 1. Generate Word Cloud
+            const cloudDiv = document.getElementById('wordCloud');
+            cloudDiv.innerHTML = '';
+            if (singleData.word_freq) {
+                const maxFreq = Math.max(...Object.values(singleData.word_freq));
+                for (const [word, freq] of Object.entries(singleData.word_freq)) {
+                    const span = document.createElement('span');
+                    span.className = 'cloud-word';
+                    span.innerText = word;
+                    const size = 14 + (freq / maxFreq) * 36; 
+                    span.style.fontSize = `${size}px`;
+                    cloudDiv.appendChild(span);
+                }
+            }
+
+            // 2. Generate Pie Chart
+            const ctx = document.getElementById('pieChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(singleData.word_freq),
+                    datasets: [{
+                        data: Object.values(singleData.word_freq),
+                        backgroundColor: ['#6C63FF', '#FF9800', '#00C853', '#E91E63', '#00BCD4', '#FFEB3B', '#9C27B0', '#795548', '#607D8B', '#FF5722']
+                    }]
+                },
+                options: { plugins: { legend: { labels: { color: 'white' } } } }
+            });
+
+            localStorage.removeItem('results');
+        } else {
+            document.getElementById('singleResults').innerHTML = "<p>No data found.</p>";
+        }
+    </script>
+</body>
+</html>

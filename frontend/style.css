@@ -1,0 +1,29 @@
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+body { background-color: #0e1117; color: #ffffff; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px;}
+.container { background: #1e1e2f; padding: 40px; border-radius: 15px; border: 1px solid #3a3a5c; width: 100%; max-width: 900px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+h1, h2 { color: #6C63FF; margin-bottom: 20px; text-align: center; }
+input, textarea { width: 100%; padding: 15px; margin-bottom: 15px; background: #2a2a3e; color: #fff; border: 1px solid #4a4a6a; border-radius: 10px; font-size: 16px; outline: none; }
+input:focus, textarea:focus { border-color: #6C63FF; }
+button { width: 100%; padding: 15px; background: linear-gradient(90deg, #6C63FF, #4a3fd9); color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; margin-bottom: 10px;}
+button:hover { opacity: 0.9; }
+.card { background: #2a2a3e; padding: 20px; border-radius: 10px; margin-bottom: 15px; border-left: 5px solid #6C63FF; }
+pre { white-space: pre-wrap; font-family: inherit; color: #fff; }
+/* Tabs */
+.tab-container { display: flex; gap: 10px; margin-bottom: 20px; }
+.tab-btn { background: #2a2a3e; color: #a0a0c0; border: 1px solid #4a4a6a; padding: 10px; border-radius: 10px; cursor: pointer; flex: 1; text-align: center;}
+.tab-btn.active { background: #6C63FF; color: white; border-color: #6C63FF;}
+.tab-content { display: none; }
+.tab-content.active { display: block; }/* Light Mode Variables */
+.light-mode { background-color: #f4f7f6 !important; color: #333 !important; }
+.light-mode .container, .light-mode .card, .light-mode .tab-btn { background: #ffffff !important; color: #333 !important; border-color: #ddd !important; }
+.light-mode h1, .light-mode h2, .light-mode h3 { color: #1a73e8 !important; }
+.light-mode input, .light-mode textarea { background: #f9f9f9 !important; color: #333 !important; border: 1px solid #ccc !important; }
+.light-mode pre { color: #333 !important; }
+
+/* Theme Toggle Button */
+.theme-toggle { position: fixed; top: 20px; right: 20px; width: 50px; height: 50px; border-radius: 50%; background: #6C63FF; color: white; border: none; cursor: pointer; font-size: 24px; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 1000; }
+
+/* Word Cloud Container */
+#wordCloud { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px; padding: 20px; background: #2a2a3e; border-radius: 10px; margin-bottom: 20px; }
+.cloud-word { color: #6C63FF; font-weight: bold; transition: 0.3s; }
+.cloud-word:hover { color: #ff9800; transform: scale(1.1); }

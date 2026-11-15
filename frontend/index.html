@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - Content Pro</title>
+    <!-- CSS ka sahi rasta yahan hai -->
+    <link rel="stylesheet" href="/frontend/style.css">
+</head>
+<body>
+    <div class="container" style="max-width: 400px;">
+        <h1>🔐 Login</h1>
+        <input type="text" id="username" placeholder="Username (admin)">
+        <input type="password" id="password" placeholder="Password (1234)">
+        <button onclick="login()">Login</button>
+    </div>
+
+    <script>
+        async function login() {
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+            
+            try {
+                const res = await fetch('/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: user, password: pass })
+                });
+                const data = await res.json();
+                
+                if(data.status === 'success') {
+                    window.location.href = '/frontend/dashboard.html'; 
+                } else {
+                    alert("Galat Username ya Password!");
+                }
+            } catch (e) {
+                alert("Server error!");
+            }
+        }
+    </script>
+</body>
+</html>
